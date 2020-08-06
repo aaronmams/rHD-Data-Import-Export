@@ -1,0 +1,38 @@
+---
+title: "Lesson-3-More-Data-Import-Examples"
+author: "aaron mamula"
+date: "7/30/2020"
+output: html_document
+---
+
+This lesson offers some more really short examples of importing data from STATA, SAS, and other formats into an R workspace.
+
+
+# {.tabset .tabset-fade .tabset-pills}
+
+## Packages and Libraries
+
+In the past I have used an R package called ```foreign``` to import STATA-brand .dta files into R. I recently discovered a packages called ```haven``` from the ```tidyverse``` that has methods for importing SAS and STATA data files. 
+
+```{r}
+library(haven)
+library(here)
+```
+
+## STATA files {.tabset}
+
+For this example I pulled this [STATA .dta file](https://stats.idre.ucla.edu/stata/examples/kirk/experimental-design-procedures-for-the-behavioral-sciences-third-edition-by-roger-e-kirk/) from the UCLA Statistical Consulting website. I don't know much about it which is ok because it's only purpose here is to illustrate that STATA .dta files can be read into R using ```read_dta()``` from the ```haven``` package.
+
+```{r}
+stata.example <- read_dta(here("data/stata-example.dta"))
+head(stata.example)
+```
+
+## SAS files
+
+For this portion I have pulled a SAS data file [from the Principles of Econometrics](http://www.principlesofeconometrics.com/sas.htm) website.
+
+```{r}
+cocaine <- read_sas(here("data/cocaine.sas7bdat"))
+head(cocaine)
+```
