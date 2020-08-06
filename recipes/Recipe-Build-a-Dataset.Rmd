@@ -1,0 +1,178 @@
+---
+title: "Recipe-Build-a-Dataset-with-APIs"
+author: "aaron mamula"
+date: "8/6/2020"
+output: html_document
+---
+
+# {.tabset .tabset-fade .tabset-pills}
+
+
+## Packages and Data {.tabset}
+
+### Packages
+
+```{r, warning=F}
+library(RJSONIO) # a package to help parse JSON data returned by the Census API
+library(dplyr) # all purpose data wrangling functions/methods
+library(data.table) # loaded for the rbindlist() method
+library(DT) # makes tables look nice in .Rmd output
+library(here)
+
+library(tidyr)
+library(ggplot2)
+library(ggrepel)
+
+```
+
+### Data
+
+```{r}
+api.key <- read.csv(here('data/census-api-key.csv'))
+```
+
+## Building a dataset {.tabset}
+
+In ```skill-4-Working-with-APIs``` I covered the basics of using API calls to get Census Bureau data. Now I'm going to string together several API strings to put together a dataset containing social indicators. 
+
+IMHO the real fun with APIs is that you can build data sets programatically. One reason you may want to do somethign like this is to unburden yourself from the demands of maintaining meta-data. Let's look at an example first then I'll say a bit more about self-documenting data.
+
+Here, I'm going to build up a small data set of social indicators. Specifically, I'm going to grab the following:
+
+* DP03_0128PE: percent of people in poverty
+* DP02_0064PE: percent of population with a bachelor's degree 
+* DP04_0134E: median gross rent for renter occupied housing units
+* DP03_0062E: median household income
+
+```{r}
+# build a data frame containing identifiers for the data series that I want
+series.data <- data.frame(series.name =c('DP02_0001E','DP03_0128PE','DP02_0064PE','DP04_0134E','DP03_0062E'),
+                           series.label=c('Total_Households','Percent_in_poverty','Percent_College','Median_Gross_Rent','Median_Income'))
+
+```
+
+### Retreive the Data
+
+```{r}
+# build the API string
+
+# my API key
+key <- paste("key=",api.key$key,sep="")
+
+# the base url for Detailed Tables for the 2018 ACS 5-year
+base <- "https://api.census.gov/data/2018/acs/acs5/profile?get=NAME,"
+# geo parameters
+geo <-  "&for=place:*&in=state:06&"
+
+# paste these all together to form the API call for the poverty data series
+
+#create a function to get a clean data frame
+data.fn <- function(data.series.name){
+
+  endpoint <- paste(base,data.series.name,geo,key,sep="")
+  
+  # get json data
+  data <- fromJSON(endpoint)
+
+  # parse json object and coerce to data frame
+  data <- tbl_df(data.frame(rbindlist(lapply(data,function(x){
+    x<-unlist(x)
+    return(data.frame(name=x[1],value=x[2],state=x[3],data_series=data.series.name,
+                      data_label=series.data$series.label[which(series.data$series.name==data.series.name)]))
+  })
+  ))) %>% filter(row_number() > 1)
+return(data)  
+}
+
+indicators <- data.frame(rbindlist(lapply(series.data$series.name,FUN=data.fn)))
+```
+
+```{r}
+# a final step just to clean up the data
+indicators <- indicators %>% mutate(value=as.numeric(as.character(value))) %>%
+                     mutate(value=ifelse(value<0,NA,value))
+```
+
+### Explore the dataset
+
+Now that I have the data I want to end with something simple but cool: plot each series in relation to the national average.
+
+```{r}
+
+# National Averages (got these from quick google searches)
+
+# % below poverty line: 12%
+# % w/bachelor's degree: 33.4%
+# median income/rent ratio:
+#     median gross rent: $1,012
+#     median monthly gross income: $3,460
+
+
+# make a data set with national benchmarks 
+us.df <- data.frame(name=rep('U.S',3),value=c(12,33.4,29.2), 
+                    data_series=c(1,2,3),data_label=c("Percent_in_poverty","Percent_College","Median_Rent_Income_Ratio"))
+
+# convert to wide format data just to make some plotting easier
+indicators.wide <- indicators %>% select(name,value,state,data_label) %>% spread(data_label,value)
+head(indicators.wide)
+```
+
+### Make a Plot
+
+```{r}
+# Census Designated Places in Humboldt County, CA
+
+coastal.communities <- indicators.wide %>% filter(name %in% c('Arcata city, California',
+                                                              'Eureka city, California',
+                                                              'Fields Landing CDP, California',
+                                                              'Alderpoint CDP, California',
+                                                              'Bayview CDP (Humboldt County), California',
+                                                              'Benbow CDP, California',
+                                                              'Big Lagoon CDP, California',
+                                                              'Cutten CDP, California',
+                                                              'Fairhaven CDP, California',
+                                                              'Fieldbrook CDP, California',
+                                                              'Garberville CDP, California',
+                                                              'Hoopa CDP, California',
+                                                              'Humboldt Hill CDP, California',
+                                                              'Hydesville CDP, California',
+                                                              'Indianola CDP, California',
+                                                              'Loleta CDP, California',
+                                                              'Manila CDP, California',
+                                                              'McKinleyville CDP, California',
+                                                              'Miranda CDP, California',
+                                                              'Myers Flat CDP, California',
+                                                              'Myrtletown CDP, California',
+                                                              'Orick CDP, California',
+                                                              'Phillipsville CDP, California',
+                                                              'Pine Hills CDP, California',
+                                                              'Redcrest CDP, California',
+                                                              'Redway CDP, California',
+                                                              'Samoa CDP, California',
+                                                              'Scotia CDP, California',
+                                                              'Shelter Cove CDP, California',
+                                                              'Weott CDP, California',
+                                                              'Westhaven-Moonstone CDP, California',
+                                                              'Willow Creek CDP, California'))
+
+coastal.communities$name <- gsub(", California","",coastal.communities$name)
+
+#ggplot(coastal.communities, aes(x= log(Total_Households), y= Percent_in_poverty, label=name))+
+#  geom_point() +geom_text(aes(label=name),hjust=0, vjust=0,size=3) +
+#  geom_hline(yintercept=us.df$value[which(us.df$data_label=='Percent_in_poverty')],color="red") +
+#  theme_bw() + ylab("% Poverty") + xlab("Total Households (log)") + 
+#  ggtitle("Poverty Rates for CDPs in Humboldt County CA")
+
+ggplot(coastal.communities, aes(x= log(Total_Households), y= Percent_in_poverty, label=name))+
+  geom_point(color="blue",size=2.5) + 
+  geom_label_repel(aes(label=name),
+                   size = 2,
+                   box.padding = 0.35,
+                   segment.color='grey50') + 
+  geom_hline(yintercept=us.df$value[which(us.df$data_label=='Percent_in_poverty')],color="red")+
+  theme_classic() +
+  ylab("% Poverty") +
+  xlab("Total Households (log)") + 
+  ggtitle("Poverty Rates for CDPs in Humboldt County, CA")
+
+```

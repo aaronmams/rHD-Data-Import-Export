@@ -9,7 +9,24 @@ In this module we are going to cover the somewhat 'advanced' data import methods
 
 # {.tabset .tabset-fade .tabset-pills}
 
-## Short Intro
+## Packages and Data {.tabset}
+
+### Packages
+
+```{r, echo=F, warning=F}
+library(RMySQL)
+library(DBI)
+library(dplyr)
+library(here)
+```
+
+### Data
+
+The data for this example will be imported directly from the cloud hosted database.
+
+## Background {.tabset}
+
+### General 
 
 First, all I mean by 'remote' is not something stored on your local machine. In my work there are three flavors of remote database connections I work with:
 
@@ -19,17 +36,25 @@ First, all I mean by 'remote' is not something stored on your local machine. In 
 
 For this module we are going to work backwards from #3. This is because I can actually give everybody access to my Amazon databases. 
 
-## Importing from a Public AWS Relational Database
+### Specific 
+
+Here is some background that is somewhat interesting but not critical to understanding data import methods.
+
+The public database used in ```Example 1``` contains locations and quantities of needles picked up in Santa Cruz, CA by public employees. Basically, I went to the City of Santa Cruz and asked for all the data they had on used hypodermic needles found in public spaces. They gave me a set of logs kept by Parks and Recreation, Public Works, and a few other departments. I transcribed these into a set of .csv files. 
+
+I then created a MySQL database instance in the Amazon RDS cloud hosting service. I used a MySQL Client called MySQL Workbench to connect to this database and upload the needle log .csv files to the MySQL database instance. 
+
+This database has two tables: ```needle_events``` and ```locations_geo```. When we query these tables in ```Example 1``` we get:
+
+1. A data frame called "needles". This is a log of hypodermic needles picked up by Santa Cruz City Workers. Each observation is a "needle encounter" and include a date, location, quantity, and identifier for the muncipal department involved in the "encounter"
+
+2. A data frame called "geos". This is a look-up table I created with (somewhat) precise geo-referencing for the locations recorded on the needle logs.
+
+## Example 1:Public AWS Database {.tabset}
 
 I'm going to do this is kind of reverse order and put the fun code part first...then I'll try to explain some less fun details later:
 
-
-```{r include=F, echo=F, warning=F}
-library(RMySQL)
-library(DBI)
-library(dplyr)
-library(here)
-```
+### Data Pull
 
 ```{r}
 cn <- dbConnect(drv      = RMySQL::MySQL(), 
@@ -62,7 +87,7 @@ head(geos)
 * *needles* is a database table I constructed using logs that Santa Cruz city workers are required to fill out when they pick up a used hypodermic needle.
 * *geos* is a database table I constructed with georeferenced coordinates for each 'place' in the *needles* table.
 
-### Breaking Down the Data Import
+### Step-by-Step
 
 For most database connections we need a few things:
 
@@ -70,7 +95,7 @@ For most database connections we need a few things:
 * a datasource
 * some connection credentials/details
 
-### Driver
+#### Driver
 
 A database driver is just a program that implements a protocol for a database connection. A Database Management System (DBMS) needs an adapter program (a driver) to enable other systems to connect to it. In this case, I am using the MySQL Database Management System so we need a MySQL driver to connect to this database. This example is relatively simple because the MySQL database driver is contained inside the R Package [RMySQL](https://cran.r-project.org/web/packages/RMySQL/index.html). We provide this driver as an argument to the dbConnect() method.
 
@@ -81,7 +106,7 @@ dbConnect(drv = RMySQL::MySQL(),...)
 
 In the appendix, we provide examples of connection strings for some other DBMS with other drivers.
 
-### Data Source
+#### Data Source
 
 In this case, the data source is just the database endpoint. For some database connection applications, specifying the data source an be a little tricky...but for this one it's pretty straight forward.
 
@@ -98,7 +123,7 @@ knitr::include_graphics(here('figures/aws-rds-dashboard.png'))
 knitr::include_graphics(here('figures/aws-rds-endpoint.png'))
 ```
 
-### Connection Credentials/Details
+#### Connection Credentials/Details
 
 The remaining arguments provided to the dbConnect() method are:
 
@@ -107,19 +132,6 @@ The remaining arguments provided to the dbConnect() method are:
 * database name: in this case the host location is a cloud hosted database instance which is capable of hosting many different databases. Since the database name may not be unique to endpoint, we have to tell the server which database on this host we want to connect to. 
 
 
-## AWS Discussion 
-
-Here is some background that is somewhat interesting but not critical to understanding data import methods.
-
-Again, if everything worked out ok in the previous section, here is what we should have:
-
-1. A data frame called "needles". This is a log of hypodermic needles picked up by Santa Cruz City Workers. Each observation is a "needle encounter" and include a date, location, quantity, and identifier for the muncipal department involved in the "encounter"
-
-2. A data frame called "geos". This is a look-up table I created with (somewhat) precise geo-referencing for the locations recorded on the needle logs.
-
-Basically, I went to the City of Santa Cruz and asked for all the data they had on used hypodermic needles found in public spaces. They gave me a set of logs kept by Parks and Recreation, Public Works, and a few other departments. I transcribed these into a set of .csv files. 
-
-I then created a MySQL database instance in the Amazon RDS cloud hosting service. I used a MySQL Client called MySQL Workbench to connect to this database and upload the needle log .csv files to the MySQL database instance. 
 
 
 ## Appendix: An Oracle DB Example
@@ -140,7 +152,7 @@ Here are the steps:
     * providing the DBAs with a static IP address so they can allow you past the firewall
     * obtaining login credentials from the DBAs
     
-4. For windows users (which is most people in the federal government) wishing to connect through Open Database Connectivity (ODBC) protocols, you will also probably have to engage your IT person for adminstrative access in order to set a Data Source Name in the Windows Data Source Adminstrator Program. Note: there is an alternative that I will discuss below.
+4. For windows users (which is most people in the federal government) wishing to connect through Open Database Connectivity (ODBC) protocols, you may need to engage your IT person for adminstrative access in order to set a Data Source Name in the Windows Data Source Adminstrator Program. Note: there is an alternative that I will discuss below.
 
 It is notable that basically all of these steps involve relying on someone else to do stuff for you. Because of this, I found the process of getting an Oracle DB connection set-up to be pretty frustrating.
 
