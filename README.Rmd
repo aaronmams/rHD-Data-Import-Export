@@ -2,7 +2,7 @@
 title: "READ-ME"
 author: "aaron mamula"
 date: "7/30/2020"
-output: html_document
+output: md_document
 ---
 
 # {.tabset .tabset-fade .tabset-pills}
@@ -13,11 +13,17 @@ The primary objective of this lesson is to show how data from spreadsheet-type a
 
 This lesson will use the following .Rmd files
 
-1. ```Lesson-1-Import-Spreadsheet-Data.Rmd```
-2. ```Lesson-2-Export-Spreadsheet-Data.Rmd```
-3. ```Lesson-3-More-Data-Import-Examples.Rmd```
+1. ```skill-1-Import-Spreadsheet-Data.Rmd```
+2. ```skill-2-Export-Spreadsheet-Data.Rmd```
+3. ```skill-3-More-Data-Import-Examples.Rmd```
+4. ```skill-4-Working-with-APIs.Rmd```
+5. ```skill-5-Working-with-Databases.Rmd```
 
-We will examine this file together and discuss the foundational task of getting spreadsheet-like data into R for further analysis.
+These files are located in the [skills directory](https://github.com/aaronmams/rHD-skill-1-Data-Import/tree/master/skills) with the project.
+
+Additionally, there is a single .Rmd file in the [recipes](https://github.com/aaronmams/rHD-skill-1-Data-Import/tree/master/recipes) directory:
+
+6. ```Recipe-Build-a-Dataset.Rmd```
 
 ## Contents {.tabset}
 

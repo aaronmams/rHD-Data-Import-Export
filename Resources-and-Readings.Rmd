@@ -1,0 +1,20 @@
+---
+title: "Resources-and-Readings"
+author: "aaron mamula"
+date: "8/6/2020"
+output: html_document
+---
+
+## read.csv() and write.csv()
+[The "Reading and Writing CSV Files"](https://swcarpentry.github.io/r-novice-inflammation/11-supp-read-write-csv/) from the Software Carpentry Group is pretty nice.
+
+## read_csv()
+[Chapter 11: Data Import](https://r4ds.had.co.nz/data-import.html) from Hadley Wickham's e-book R For Data Science.
+
+## RJSONIO
+[Zev Ross's blog has a nice RJSONIO tutorial](http://zevross.com/blog/2015/02/12/using-r-to-download-and-parse-json-an-example-using-data-from-an-open-data-portal/)
+
+## Databases
+
+[Link to the CRAN repository for the RMySQL driver](https://cran.r-project.org/web/packages/RMySQL/index.html)
+
