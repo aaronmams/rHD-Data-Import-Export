@@ -1,0 +1,129 @@
+---
+title: "Lesson-2-Export-Spreadsheet-Data"
+author: "aaron mamula"
+date: "7/30/2020"
+output: html_document
+---
+
+
+# {.tabset .tabset-fade .tabset-pills}
+
+Getting data from spreadsheet-type applications (like .csv files) into R for analysis is foundational task. Taking data frames that have been created inside of R and saving them for future use can also be an important feature for reproducable analysis. This file will demonstrate a few ways that R can be used to "write" data. 
+
+```{r include=F}
+library(dplyr)
+library(data.table)
+library(here)
+```
+
+## Data Export Methods {.tabset}
+
+### write.csv()
+
+The compliment to the ```read.csv()``` data import method is the ```write.csv()``` method. As the name suggests, ```write.csv()``` takes data within R (often organized as a data.frame) and saves that data to a .csv file.
+
+Mechanically, ```write.csv()``` is pretty simple. Suppose we are working with the the ```flights_small.csv``` dataset and (for some reason) we want to save all the Alaska Airlines flights as a separte data set. Here how we might do that:
+
+```{r}
+flts <- read.csv(here('data/flights_small.csv'))
+flts.AS <- flts %>% filter(AIRLINE=='AS')
+write.csv(flts.AS,file=here("data/Alaska_Airlines_flights.csv"))
+
+```
+
+This operation create a new data file in our project. If we (for whatever reason) wanted to read in only the Alaska Airlines flights, we would do,
+
+```{r}
+AS.flights <- read.csv(here('data/Alaska_Airlines_flights.csv'))
+head(AS.flights)
+```
+
+### saveRDS()
+
+Rather than save our new data as a .csv file, we could save it as an R Data file. For this we could use the method ```saveRDS()```. There are some subtle differences between the R Data file types .RData, .rda, and .rds files. However, for this lesson it is sufficient to understand that when saving a single data frame it is generally perferable to use the .rds extension.
+
+http://uc-r.github.io/exporting#export_r_objects
+
+```{r}
+flts <- read.csv(here('data/flights_small.csv'))
+flts.AS <- flts %>% filter(AIRLINE=='AS')
+saveRDS(flts.AS,file=here("data/Alaska_Airlines_flights.rds"))
+```
+
+### write.csv() vs. saveRDS()
+
+There are some space efficiencies and speed differences between saving data frames to .csv files versus RData files. Here we can see that the ```Alaska_Airlines_flights``` data is considerably smaller when saved as a .rds as opposed to a .csv file.
+
+```{r}
+system("ls -lh data/Alaska_Airlines_flights*")
+```
+
+
+## A Data Export Use-Case
+
+So far we've provided some simple examples of how data export *could* be done in R. A related question is why it *would* be done. In this section we attempt to present a compelling use-case for the ```write.csv()``` method.
+
+### Problem Statement
+
+[In this NOAA Tech Memo](https://swfsc.noaa.gov/publications/TM/SWFSC/NOAA-TM-NMFS-SWFSC-623.pdf) we outlined a process for using high resolution spatial data from Vessel Monitoring Systems (VMS) to supplement existing commercial fishing data sources.
+
+VMS data, because they log vessel locations every 15 mins to every hour (depending on the fishery), can potentially help assess the spatial distribution of commercial fishing at very fine scales. However, since VMS data do not contain fishery specific information, they generally must be joined with other data sources in order to be informative.
+
+### Solution Summary
+
+For this analysis cited above we created a data frame containing commercial groundfish fishing trips off the U.S. West Coast and all the VMS polls logged during those trips. The algorithm that we use to create a final data frame from various primary data sources is not conceptually complicated but does involve many steps. Because of the size of the primary (raw) data sets, the algorithm is also time-consuming. 
+
+Because the algorithm to construct a final anlaysis-ready data set from primary data sources is time consuming, we it would have been very inefficient to reconstruct the data everytime we changed some part of the analysis. 
+
+### An Optomistic Data Pipeline
+
+Here is a kind of general illustration of a "data pipeline." The principles of reproduceable research/reproduceable science usually dictate that one has some kind of code organization that executes all steps in an analysis from building a dataset all the way through to analyzing that data set and reporting results. This way, other analysts can always reproduce the results as long as they have access to the raw underlying data.
+
+```{r  out.width = "50%", fig.cap="Figure 1: Canonical Data Pipeline"}
+knitr::include_graphics(here('figures/data-pipeline-1.png')) 
+```
+
+
+### A Practical (segmented) Data Pipeline
+
+The data pipeline shown above implies a start-to-finish process where the raw data, data manipulations, and data analysis are integrated into a code flow. When an analysis is finalized, this "unbroken" data pipeline is often what an analyst will want to pass on to colleagues/journals/etc.
+
+However, when analysis is "in-development" it is often advantageous to separate the "data diagnostics" and "model fitting steps" from the "data construction steps."
+
+In this case, ```write.csv()``` (or ```saveRDS()```) can be quite helpful in producing a static, "clean" data set that can be used for algorithm testing, model selection, etc.
+
+```{r  out.width = "50%", fig.cap="Figure 2: Segemented Data Pipeline"}
+knitr::include_graphics(here('figures/data-pipeline-2.png')) 
+```
+
+### Data Sources
+
+For this project we have two primary data sources:
+
+1. Fish Ticket Lines (FTL): these data are records kept by the Pacific Fisheries Information Network on all West Coast Commerical Fish Landings. They are contained in a relational database. 
+
+2. Vessel Monitoring System Data (VMS): vessel monitoring systems are satellite tracking data that log the position (latitude/longitude) of fishing vessels on regular time intervals (for West Coast data the positions are update every hour). These data are housed in a relational database independent from the *Fish Ticket Database*
+
+
+### Data Challenges
+
+The primary challenge here is that the VMS data are really big. We only want to work with a subset of this enormous data set...but in order to define that subset, we have to leverage data from a separate database.
+
+### Use of write.csv()
+
+The details of the algorithm used to match-up data between VMS and Fish Tickets are tedious and boring but the general idea is something like this:
+
+1. Filter the Fish Ticket data to include just the unique groundfish vessels.
+2. Query the VMS database for just these vessels
+3. Join the two data sources together 
+
+Because the VMS data are very large, this process (simple as it is) takes a long time to execute. Long enough, in fact, that it would be very inconvenient to extract data from the database and manipulate those data to form a "clean" data frame each time we wanted to create some output.
+
+We solve this process by just executing the "Data Manipulation" portion of Figure 2 once. Then, once the "clean" data frame has been generated and saved to a file, we can start any new iteration of model/algorithm testing at the "Read clean data frame into workspace" step. This saves a lot of time. 
+
+
+
+
+
+
+

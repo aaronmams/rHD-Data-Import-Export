@@ -1,0 +1,149 @@
+---
+title: "Lesson-1-Import-Speadsheet-Data"
+author: "aaron mamula"
+date: "7/30/2020"
+output: html_document
+---
+
+```{r include=FALSE}
+library(dplyr)
+library(tidyr)
+library(readr)
+library(knitr)
+library(kableExtra)
+library(data.table)
+library(here)
+```
+
+The objective of this module is to get everyone comfortable with importing spreadsheet type data from local sources. My perception (which may or may not be true) of Social Scientists research within NMFS is that it leverages a pretty wide range of data sources. Although I see us moving more in the direction of setting up and utilizing programmatic data streams, many of us still rely (to varying degrees) on data collected under project specific circumstances.
+
+These data are often stored in spreadsheet type formats like .csv, .txt, or .xls. Here we'll walk through some simple functions to get such data into our R enviornments. 
+
+# {.tabset .tabset-fade .tabset-pills}
+
+## Conventionally formatted data {.tabset}
+
+Here we are going to cover 3 methods for importing data from a spreadsheet-like data file that I have saved locally as a .csv. The three methods I'm going to cover are:
+
+* read.csv()
+* readr::read_csv()
+* data.table::fread()
+
+Here, I'm going to use a fun dataset from Kaggle on the [top 50 most downloaded songs on Spotify from 2019](https://www.kaggle.com/leonardopena/top50spotify2019/version/1#). 
+
+### Conventionally formatted data with read.csv()
+
+The read.csv() method is a base R functionality for reading comma separated value data file formats.
+
+```{r}
+songs <- read.csv(file=here('data/spotify-top50.csv'))
+head(songs)
+```
+
+### Conventionally formatted data with read_csv()
+
+The read_csv() method is part of the tidyr ecosystem and comes from the readr package. According to documentation it's supposed to be a lot faster than read.csv(). [Here is a pretty thorough](https://csgillespie.github.io/efficientR/5-3-importing-data.html) discussion of why/how read_csv() and fread() load large data sets considerably faster than read.csv().
+
+Practically speaking, it works just like the read.csv() method.
+
+```{r}
+songs.dplyr <- read_csv(file=here('data/spotify-top50.csv'))
+head(songs)
+```
+
+### Conventionally formatted data with fread()
+
+The fread() method comes from the data.table package which is a library of functions that work really fast on large data sets.
+
+```{r}
+songs.dt <- fread(here('data/spotify-top50.csv'))
+head(songs.dt)
+```
+
+### Benchmarking Conventionally Formatted Data
+
+A lot of discussion I've seen in R Users Groups centers around the speed/efficiency of the various data import methods for .csv-type data. Here is a visual reproduced from [https://csgillespie.github.io/efficientR/5-3-importing-data.html](https://csgillespie.github.io/efficientR/5-3-importing-data.html)
+
+![](figures/fred_vs_readcsv.png)
+
+Here is a benchmarking example. For benchmarking we'll use a rather large data set from Kaggle. This one is available as part of the [2015 Flight Cancellation Data Mart](https://www.kaggle.com/usdot/flight-delays). The [flight.csv](https://www.kaggle.com/usdot/flight-delays#flights.csv) data file has over 5 million records and 31 fields (columns). I have prepared a sample of this data set and made it available here...if you would like to experiment with the full massive data set you can get that through the links I just provided.
+
+```{r}
+
+t <- Sys.time()
+flights <- read.csv(file=here('data/flights_small.csv'))
+t.base <- Sys.time() - t
+
+
+t <- Sys.time()
+flights <- read_csv(file=here('data/flights_small.csv'))
+t.dplyr <- Sys.time() - t
+
+
+t <- Sys.time()
+flights <- fread(here('data/flights_small.csv'))
+t.dt <- Sys.time() - t
+
+
+c(t.base,t.dplyr,t.dt)
+```
+
+For this example, I cut the data set down to ~500,000 records on 31 fields. The full data set has over 5.8 million records. If you're really into speed and you absolutely must have all 5.8 million records and 31 fields of the data, the fread() method is more than 10X faster than the base read.csv().
+
+## Oddly formatted/poorly formatted 
+
+* readLines()
+
+readlines can be helpful with unstructured or weird data like:
+
+```{r echo=F}
+x <- kable(c("John, Smith, Nebraska, 1970-01-05",
+        "Jane,Doe,Kansas","Linda,Black,Wisconsin,1974-02-16",
+        "Randall,White,1968-11-20"),format='html') %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) 
+gsub("<thead>.*</thead>", "", x)
+```
+
+because the 2nd line doesn't have a date and the 4th line doesn't have a state, attempts to use stuff like read.csv() will be problematic because columns don't line up. Here readlines() will read each line separately.
+
+```{r}
+dat <- readLines(con=here('data/readlines-example.txt'),warn=F)
+str(dat)
+```
+
+## Other data read functions of interest
+
+There are R libraries and methods to read data from tons of different file formats. Two that may be of particular interest to economists/social scientists are methods to read STATA generated data files and methods to read excel .xls files. Here are some links to read more about these methods.
+
+* [read.dta()](https://www.rdocumentation.org/packages/foreign/versions/0.8-75/topics/read.dta): reads STATA .dta datasets
+* [readxl](https://readxl.tidyverse.org/): reads excel-type .xls files
+
+### A readxl example
+
+I have a MS Excel Workbook that I have imported here called ```xls-example.xlsx```. It is very uninteresting and totally meaningless but it will work as an illustration of this method.
+
+```{r}
+library(readxl)
+xcel.df <- read_excel(here('data/xls-example.xlsx'))
+str(xcel.df)
+```
+
+Things to note:
+
+1. the workbook ```xls-example.xlsx``` has 2 tabs (sheets)
+2. the default read from ```readxl``` will just read the first sheet
+3. if you want to import data from a particular tab within the workbook you can specify that option like this:
+
+```{r}
+# get a list of "sheets"
+excel_sheets(here('data/xls-example.xlsx'))
+```
+
+So the available sheets are "2019" and "2020". We can import data from each using:
+
+```{r}
+read_excel(here('data/xls-example.xlsx'),sheet='2019')
+read_excel(here('data/xls-example.xlsx'),sheet='2020')
+
+```
+

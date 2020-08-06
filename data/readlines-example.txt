@@ -1,0 +1,4 @@
+John,Smith,Nebraska,1970-01-05
+Jane,Doe,Kansas
+Linda,Black,Wisconsin,1974-02-16
+Randall,White,1968-11-20
