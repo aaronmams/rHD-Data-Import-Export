@@ -11,10 +11,25 @@ output: html_document
 ## read_csv()
 [Chapter 11: Data Import](https://r4ds.had.co.nz/data-import.html) from Hadley Wickham's e-book R For Data Science.
 
-## RJSONIO
+## APIs
+
+### General
+
+[Good general purpose article on Medium about R and APIs](https://medium.com/@traffordDataLab/querying-apis-in-r-39029b73d5f1)
+
+[The Earth Lab at University of Colorado has a nice, pretty deep R-API tutorial](https://www.earthdatascience.org/courses/earth-analytics/get-data-using-apis/API-data-access-r/)
+
+### RJSONIO
+
 [Zev Ross's blog has a nice RJSONIO tutorial](http://zevross.com/blog/2015/02/12/using-r-to-download-and-parse-json-an-example-using-data-from-an-open-data-portal/)
 
 ## Databases
 
 [Link to the CRAN repository for the RMySQL driver](https://cran.r-project.org/web/packages/RMySQL/index.html)
+
+[R Studio help-page on Oracle Databases](https://db.rstudio.com/databases/oracle/)
+
+[R Studio help-page on SQL Server Databases](https://db.rstudio.com/databases/microsoft-sql-server/)
+
+[R Studio support on connect to SQL Server Database](https://support.rstudio.com/hc/en-us/articles/214510788-Setting-up-R-to-connect-to-SQL-Server-)
 
