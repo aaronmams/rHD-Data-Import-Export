@@ -5,7 +5,7 @@ date: "7/30/2020"
 output: html_document
 ---
 
-```{r include=FALSE}
+```{r}
 library(dplyr)
 library(tidyr)
 library(readr)
@@ -17,7 +17,7 @@ library(here)
 
 The objective of this module is to get everyone comfortable with importing spreadsheet type data from local sources. My perception (which may or may not be true) of Social Scientists research within NMFS is that it leverages a pretty wide range of data sources. Although I see us moving more in the direction of setting up and utilizing programmatic data streams, many of us still rely (to varying degrees) on data collected under project specific circumstances.
 
-These data are often stored in spreadsheet type formats like .csv, .txt, or .xls. Here we'll walk through some simple functions to get such data into our R enviornments. 
+These data are often stored in spreadsheet type formats like .csv, .txt, or .xls. Here we'll walk through some simple functions to get such data into our R environments. 
 
 # {.tabset .tabset-fade .tabset-pills}
 
@@ -64,7 +64,9 @@ head(songs.dt)
 
 A lot of discussion I've seen in R Users Groups centers around the speed/efficiency of the various data import methods for .csv-type data. Here is a visual reproduced from [https://csgillespie.github.io/efficientR/5-3-importing-data.html](https://csgillespie.github.io/efficientR/5-3-importing-data.html)
 
-![](figures/fred_vs_readcsv.png)
+```{r}
+include_graphics(here('figures/fred_vs_readcsv.png'))
+```
 
 Here is a benchmarking example. For benchmarking we'll use a rather large data set from Kaggle. This one is available as part of the [2015 Flight Cancellation Data Mart](https://www.kaggle.com/usdot/flight-delays). The [flight.csv](https://www.kaggle.com/usdot/flight-delays#flights.csv) data file has over 5 million records and 31 fields (columns). I have prepared a sample of this data set and made it available here...if you would like to experiment with the full massive data set you can get that through the links I just provided.
 
