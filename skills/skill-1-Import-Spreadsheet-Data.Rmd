@@ -11,18 +11,29 @@ The objective of this module is to get everyone comfortable with importing sprea
 
 These data are often stored in spreadsheet type formats like .csv, .txt, or .xls. Here we'll walk through some simple functions to get such data into our R environments. 
 
-## Packages and Dependencies
+## Packages and Dependencies {.tabset}
+
+### Packages
 
 ```{r}
-library(dplyr)
-library(tidyr)
-library(readr)
-library(knitr)
-library(kableExtra)
-library(data.table)
-library(here)
+library(dplyr) # for data manipulations
+library(tidyr) # has functions for reading from MS Excel file types
+library(readr) # for the read_csv() method
+library(knitr) # 
+library(kableExtra) # nice packages to tidy up markdown tables
+library(data.table) # for the fread() method
+library(here) # for file path management
 ```
 
+### Data
+
+1. The [Spotify Top 50 2019](https://www.kaggle.com/leonardopena/top50spotify2019/version/1#) data is a fun data set I got from Kaggle.
+
+2. Also from Kaggle, the [2015 Flight Cancellation Data Mart](https://www.kaggle.com/usdot/flight-delays) has a [flight.csv](https://www.kaggle.com/usdot/flight-delays#flights.csv) data set. I used this one because it's reasonably large without being overwhelming...so it's a nice data set to illustrate how methods work with larger data sets.
+
+3. I also have a trivial toy text file called ```readlines-example.txt``` to illustrate the ```read.txt()``` method.
+
+4. And ```xls-example.xlsx``` is a file I created to illustrate the ```read_excel()``` method.
 
 ## Conventionally formatted data {.tabset}
 
