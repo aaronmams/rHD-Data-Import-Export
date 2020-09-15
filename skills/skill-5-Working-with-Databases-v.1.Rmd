@@ -27,7 +27,18 @@ The data for this example will be imported directly from the cloud hosted databa
 
 ## Background {.tabset}
 
-### General 
+### Roadmap
+
+The overarching organization of this lesson is as follows:
+
+1. I have an illustration of how to extract data from a MySQL database using the ```dbConnect()``` method from the [DBI](https://db.rstudio.com/getting-started/connect-to-database/) package. This illustration requires downloading a ```MySQL``` driver from the [RMySQL](https://cran.r-project.org/web/packages/RMySQL/index.html) package.
+
+2. I have a short abstract discussion of using the [RODBC](https://www.r-bloggers.com/connecting-r-to-an-oracle-database/) package to extract data from an Oracle Database. This is abstract because the Oracle Database that I work with is highly confidential and I can't allow others to access it.
+
+3. I have provided some resources to help with the various issues generally encountered when trying to set up an R-Database pipeline.
+
+
+### General Background
 
 First, all I mean by 'remote' is not something stored on your local machine. In my work there are three flavors of remote database connections I work with:
 
@@ -135,8 +146,13 @@ The remaining arguments provided to the dbConnect() method are:
 * port: sometimes you will need to provide this (see the AWS dashboard figure above) but other times it will be mapped through a configuration file (see Appendix)
 * database name: in this case the host location is a cloud hosted database instance which is capable of hosting many different databases. Since the database name may not be unique to endpoint, we have to tell the server which database on this host we want to connect to. 
 
+## Resources
 
+[Setting Up a DSN on Windows](https://www.r-bloggers.com/setting-up-an-odbc-connection-with-ms-sql-server-on-windows/)
 
+[Setting Up an Oracle Driver in Windows](https://docs.vmware.com/en/VMware-Smart-Assurance/10.1.0/sam-adapter-sdi-user-guide-101/GUID-25543AB3-FE29-4C98-A47F-8877003167E0.html)
+
+[Nice R/Database Cheatsheet](https://www.youtube.com/watch?v=SOl3N9yKdNU)
 
 ## Appendix: An Oracle DB Example
 
