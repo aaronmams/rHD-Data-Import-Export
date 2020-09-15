@@ -5,6 +5,14 @@ date: "7/30/2020"
 output: html_document
 ---
 
+# {.tabset .tabset-fade .tabset-pills}
+
+The objective of this module is to get everyone comfortable with importing spreadsheet type data from local sources. My perception (which may or may not be true) of Social Scientists research within NMFS is that it leverages a pretty wide range of data sources. Although I see us moving more in the direction of setting up and utilizing programmatic data streams, many of us still rely (to varying degrees) on data collected under project specific circumstances.
+
+These data are often stored in spreadsheet type formats like .csv, .txt, or .xls. Here we'll walk through some simple functions to get such data into our R environments. 
+
+## Packages and Dependencies
+
 ```{r}
 library(dplyr)
 library(tidyr)
@@ -15,11 +23,6 @@ library(data.table)
 library(here)
 ```
 
-The objective of this module is to get everyone comfortable with importing spreadsheet type data from local sources. My perception (which may or may not be true) of Social Scientists research within NMFS is that it leverages a pretty wide range of data sources. Although I see us moving more in the direction of setting up and utilizing programmatic data streams, many of us still rely (to varying degrees) on data collected under project specific circumstances.
-
-These data are often stored in spreadsheet type formats like .csv, .txt, or .xls. Here we'll walk through some simple functions to get such data into our R environments. 
-
-# {.tabset .tabset-fade .tabset-pills}
 
 ## Conventionally formatted data {.tabset}
 
