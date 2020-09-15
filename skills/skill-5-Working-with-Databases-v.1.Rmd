@@ -18,6 +18,7 @@ library(RMySQL)
 library(DBI)
 library(dplyr)
 library(here)
+library(RODBC)
 ```
 
 ### Data
@@ -63,8 +64,11 @@ cn <- dbConnect(drv      = RMySQL::MySQL(),
                 host     = "mams-teaching-public.c65i4tmttvql.us-west-1.rds.amazonaws.com", 
                 port     = 3306, 
                 dbname   = "needle_waste")
+dbListTables(cn)
+```
 
 
+```{r}
 needles <- tbl(cn, "needle_events")
 needles <- tbl_df(needles)
 
@@ -85,7 +89,7 @@ head(geos)
 ```
 
 * *needles* is a database table I constructed using logs that Santa Cruz city workers are required to fill out when they pick up a used hypodermic needle.
-* *geos* is a database table I constructed with georeferenced coordinates for each 'place' in the *needles* table.
+* *geos* is a database table I constructed with geo-referenced coordinates for each 'place' in the *needles* table.
 
 ### Step-by-Step
 

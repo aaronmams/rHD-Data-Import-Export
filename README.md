@@ -32,7 +32,7 @@ above.
 
 ### Data
 
-There are several "toy" data files provided for this lesson. They are:
+There are several “toy” data files provided for this lesson. They are:
 
 1.  `flights_small.csv`
 2.  `spotify-top50.csv`
@@ -59,14 +59,14 @@ skip this section nothing bad will happen.
 In my experience Social Scientists work with spreadsheet-type data A
 LOT. Particularly within NMFS, I observe that many of our research
 projects are centered around data that we have had to collect (either by
-scraping the web, going to a data warehouse like the St. Louis Fed, or
+scraping the web, going to a data warehouse like the St. Louis Fed, or
 conducting our own primary data collection). So I see the task of
 getting data from a .csv file into R to be a near universally important
 task for this group.
 
 I wanted to lead off the course with this lesson in order to try and
-make things immediately "fun." I suppose fun is pretty subjective but I
-suspect we all consider ourselves "data" people. And as "data" people, I
+make things immediately “fun.” I suppose fun is pretty subjective but I
+suspect we all consider ourselves “data” people. And as “data” people, I
 imagine that we would all rather be playing with real-life data than
 talking about syntax or the difference between a vector and a list.
 
@@ -89,7 +89,7 @@ spreadsheet-type applications.
 ### APIs
 
 I claim no expertise in developing data streams using APIs. In fact,
-"upping my API-game" is probably my biggest coding resolution for
+“upping my API-game” is probably my biggest coding resolution for
 2020/2021. I think familiarity with R-API relationships is important
 because:
 
