@@ -1,5 +1,5 @@
 ---
-title: "Skill-5-Advanced-Data-Import-v.1"
+title: "Lesson-5-Advanced-Data-Import-v.1"
 author: "aaron mamula"
 date: "4/9/2020"
 output: html_document
@@ -91,7 +91,7 @@ If (probably a big if) the stars have aligned for us and everybody was able to e
 ```{r}
 head(needles)
 ```
-Example of a simple SQL query to retrive only certain observations from the ```needle_events``` table:
+Example of a simple SQL query to retreive only certain observations from the ```needle_events``` table:
 
 ```{r}
 dbGetQuery(cn, "SELECT * FROM needle_events where NEEDLE_QUANTITY>1")

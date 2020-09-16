@@ -8,7 +8,7 @@ output: html_document
 
 # {.tabset .tabset-fade .tabset-pills}
 
-Getting data from spreadsheet-type applications (like .csv files) into R for analysis is foundational task. Taking data frames that have been created inside of R and saving them for future use can also be an important feature for reproducable analysis. This file will demonstrate a few ways that R can be used to "write" data. 
+Getting data from spreadsheet-type applications (like .csv files) into R for analysis is foundational task. Taking data frames that have been created inside of R and saving them for future use can also be an important element of good, reproducible analysis. This file will demonstrate a few ways that R can be used to "write" data. 
 
 ```{r include=F}
 library(dplyr)
@@ -55,7 +55,8 @@ saveRDS(flts.AS,file=here("data/Alaska_Airlines_flights.rds"))
 There are some space efficiencies and speed differences between saving data frames to .csv files versus RData files. Here we can see that the ```Alaska_Airlines_flights``` data is considerably smaller when saved as a .rds as opposed to a .csv file.
 
 ```{r}
-system("ls -lh data/Alaska_Airlines_flights*")
+string1 <- paste("ls","-lh",here('data/Alaska_Airlines_flights*'))
+cat(system(string1,intern=TRUE),sep="\n")
 ```
 
 
