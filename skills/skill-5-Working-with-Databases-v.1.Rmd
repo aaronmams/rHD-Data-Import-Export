@@ -92,11 +92,21 @@ If (probably a big if) the stars have aligned for us and everybody was able to e
 head(needles)
 ```
 
+```{r}
+dbGetQuery(cn, "SELECT * FROM needle_events where NEEDLE_QUANTITY>1")
+```
+
 
 ```{r}
 geos <- tbl(cn, "locations_geo")
 geos <- tbl_df(geos)
 head(geos)
+```
+Here's an example of how we could execute an inner join using both the ```needle_events``` and ```locations_geo``` tables:
+
+```{r}
+dbGetQuery(cn, "SELECT * FROM needle_events inner join locations_geo on needle_events.LOCATION_RECORDED=locations_geo.LOCATION_RECORDED")
+
 ```
 
 * *needles* is a database table I constructed using logs that Santa Cruz city workers are required to fill out when they pick up a used hypodermic needle.
