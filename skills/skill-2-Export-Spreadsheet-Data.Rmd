@@ -55,8 +55,11 @@ saveRDS(flts.AS,file=here("data/Alaska_Airlines_flights.rds"))
 There are some space efficiencies and speed differences between saving data frames to .csv files versus RData files. Here we can see that the ```Alaska_Airlines_flights``` data is considerably smaller when saved as a .rds as opposed to a .csv file.
 
 ```{r}
-string1 <- paste("ls","-lh",here('data/Alaska_Airlines_flights*'))
-cat(system(string1,intern=TRUE),sep="\n")
+file.info(here('data/Alaska_Airlines_flights.csv'))
+file.info(here('data/Alaska_Airlines_flights.rds'))
+
+#string1 <- paste("ls","-lh",here('data/Alaska_Airlines_flights*'))
+#cat(system(string1,intern=TRUE),sep="\n")
 ```
 
 
