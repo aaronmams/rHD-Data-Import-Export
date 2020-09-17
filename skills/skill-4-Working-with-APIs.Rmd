@@ -23,7 +23,14 @@ library(here)
 
 ### Data
 
-Almost all of the data for this exercise is 'streamed' through APIs. I have saved my Census Bureau API key in a .csv file in order to keep it secret.
+Almost all of the data for this exercise is 'streamed' through APIs. I have saved my Census Bureau API key in a .csv file in order to keep it secret. I am not making this data dependency available for the course because sometimes entities can get a little sensative to such things. I don't want my access revoked which could potentially happen if the Census Bureau notices a bunch of different IP addresses using my API credentials to access their databases. 
+
+If you want this next part to work you'll need to:
+
+1. create a .csv file called "census-api-key.csv" and save it to the "data" directory in this project
+2. name the first column "key"
+3. go to the [Census Bureau's Developer site and register for an API key](https://api.census.gov/data/key_signup.html)
+4. put your API key in the "census-api-key.csv" file.
 
 ```{r}
 api.key <- read.csv(here('data/census-api-key.csv'))
