@@ -1,5 +1,5 @@
 ---
-title: "READ-ME"
+title: "README"
 author: "aaron mamula"
 date: "7/30/2020"
 output: md_document
@@ -7,7 +7,7 @@ output: md_document
 
 # {.tabset .tabset-fade .tabset-pills}
 
-The primary objective of this lesson is to show how data from spreadsheet-type applications can be loaded into R. 
+The primary objective of this lesson is to show how data from spreadsheet-type applications can be loaded into R. I also provide some code to illustrate other methods of data import such as (i) importing from .xlsx files, (ii) importing from STATA and SAS data files, (iii) harvesting data using using APIs, and (iv) connecting to databases to access data in database tables.
 
 ## Instructions
 

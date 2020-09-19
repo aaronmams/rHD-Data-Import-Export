@@ -1,0 +1,153 @@
+---
+title: "ENV-Data-w-ERDDAP"
+author: "aaron mamula"
+date: "9/18/2020"
+output: html_document
+---
+
+# {.tabset .tabset-fade .tabset-pills}
+
+## Purpose
+
+I'm going to attempt to provide a minimal reproducable example of pulling some environmental data from [ERRDAP](https://coastwatch.pfeg.noaa.gov/erddap/index.html). 
+
+I don't work with physical environmental data very often and I have almost no previous experience with ERRDAP. I'm copying most of this directly from [rerrdap Vignette](https://cran.r-project.org/web/packages/rerddap/vignettes/Using_rerddap.html).
+
+## ERDDAP Background
+
+ERDDAP is a repository for scientific data. I have, on occassion, pulled some bathymetry data from [NOAA's Coastwatch ERDDAP server](https://coastwatch.pfeg.noaa.gov/). Here is how they describe their ERDDAP installation:
+
+> ERDDAP is a data server that gives you a simple, consistent way to download subsets of gridded and tabular scientific datasets in common file formats and make graphs and maps. This particular ERDDAP installation has oceanographic data (for example, data from satellites and buoys).
+
+## Packages and Dependencies
+
+This lesson works with the [rerddap](https://cran.r-project.org/web/packages/rerddap/index.html) package:
+
+> rerddap is a general purpose R client for working with ERDDAP servers. ERDDAP is a web service developed by Bob Simons of NOAA. At the time of this writing, there are over sixty ERDDAP servers (though not all are public facing) providing access to literally petabytes of data and model output relevant to oceanography, meteorology, fisheries and marine mammals, among other areas. ERDDAP is a simple to use, RESTful web service, that allows data to be subsetted and returned in a variety of formats.
+
+```{r}
+library(rerddap)
+library(dplyr)
+
+```
+
+## Getting Started
+
+I am not heavily entrenched in the ERDDAP Universe so I found the following method in the ```rerddap``` package kind of helpful. In particular, it just reminded me that this ```rerddap``` package is basically offering up a wrapper to access the mountains of data in these various public servers.
+
+```{r}
+servers()
+
+```
+We can look for particular data sets using a really broad search. However, I think that it's important to echo the warning from the ```erddap``` package maintainers here:
+
+> Be careful when using the functions ed_search() and ed_datasets(). The default ERDDAP has over 9,000 datasets, most of which are grids, so that a list of all the gridded datasets can be quite long. A seemly reasonable search: ```whichSST <- ed_search(query = "SST")```returns about 1000 responses. 
+
+Let's look at the result for such a query:
+
+```{r}
+sst.query <- ed_search(query="SST")
+
+```
+
+This is a very large list object with a lot of information in it. Let's break this result down a little just to unpack what we have:
+
+```{r}
+str(sst.datasets <- sst.query[[1]])
+
+```
+
+
+So the 1st list element is a data frame with 2 columns: ```title``` (the title of each dataset returned by our search) and ```dataset_id```. Let's have a look inside this data frame:
+
+```{r}
+sst.datasets$title[1:20]
+
+```
+
+I imagine that this info is probably meaningful for people with a lot of experience using SST data and people familiar with ERDDAP. I satisfy neither of those conditions so these titles aren't particularly meaningful to me...but I can kinda tell that they look like different ways that different organizations have measured and recorded Sea Surface Temperatures.
+
+Just for completeness, I want to point out that the 2nd element in that large list ```sst.query``` has a fair amount of info on each of the datasets, including a description:
+
+```{r}
+sst.query[[2]][[10]]
+
+```
+
+
+Note that the 2nd list element in ```sst.query``` is itself a list so to extract the 10th element of that object I used list syntax [[]].
+
+I guess the real take-away from this section is that you kind of need to know a decent amount about Oceanographic Data (how it's collected, who collects it, how it's stored, who curates it, etc.) to really move around freely in the ```rerddap``` environment.
+
+## Get Some Actual Data {.tabset}
+
+### Data Info
+
+Here, I'm going to consider the ```jplMURSST41``` dataset. First, I'm going to look for this dataset in my query results and print some info about it:
+
+```{r}
+sst.query[[2]][[which(sst.datasets$dataset_id=='jplMURSST41')]]
+
+```
+
+There is an easier way to do this btw:
+
+```{r}
+# if you uncomment this line, it will take you out to the ERDDAP index webpage for this dataset 
+# browse('jplMURSST41')
+info('jplMURSST41')
+
+```
+
+### Set Some Filters
+
+From [https://cran.r-project.org/web/packages/rerddap/vignettes/Using_rerddap.html](https://cran.r-project.org/web/packages/rerddap/vignettes/Using_rerddap.html):
+
+> The underlying data model in ERDDAP is quite simple - everything is either a (multi-dimensional) grid (think R array) or a table (think a simple spreadsheet or data table). Grids are subsetted using the function griddap() and tables are subset using the function tabledap(). 
+
+A lot of environmental data sets are pretty high resolution, making them really big. Here, we're going to set some parameters to limit the amount of data we request:
+
+```{r}
+latitude = c(22., 51.)
+longitude = c(-140., -105)
+time = c("2020-09-01", "2020-09-15")
+```
+
+To request data we can use the ```griddap()``` or ```tabledap()``` functions. One thing to note here is that, to use ```griddap()``` we pass the results of the ```info()``` function for the dataset we are interested in. We can also pass the filtering parameters:
+
+```{r}
+sstInfo <- info('jplMURSST41')
+murSST <- griddap(sstInfo, latitude = c(22., 51.), longitude = c(-140., -105), time = c("2017-01-01", "2017-01-02"), fields = 'analysed_sst')
+
+```
+
+This request returns a lot of data. And by that I don't mean it returns a large data frame, I mean it returns a lot of information. First, note the result of the data request is a large list:
+
+```{r}
+class(murSST)
+object.size(murSST)
+```
+
+### Explore Output 
+
+The first element in the list is what I might call "meta-data". It's basically a bunch of info on the parameters we used to filter the data request. We have to dig down pretty deep inside the list to extract information that I recognize as meaningful...but we do something like:
+
+```{r}
+list.element.1 <- murSST[[1]]
+str(list.element.1)
+```
+
+We can see that the latitude information for the grid that we requested is a sub-element of a larger element called ```dim```:
+
+```{r}
+list.element.1$dim
+```
+
+### Get Data
+
+Ok, so now for the payoff. The SST data that we requested - gridded observations between $22\circ$ and $51\circ$ N. lat and $-140\circ$ and $-105\circ$ W. long, for 09-01-2020:09/15/2020 - is contained in the 2nd list element:
+
+```{r}
+head(murSST[[2]])
+
+```
