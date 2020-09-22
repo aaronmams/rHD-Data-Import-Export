@@ -81,6 +81,10 @@ I guess the real take-away from this section is that you kind of need to know a 
 
 ## Get Some Actual Data {.tabset}
 
+This example is going to work with an SST dataset called ```jplMURSST41```. Here is a little blurb about these data from [an rerrdap Vignette](https://cran.r-project.org/web/packages/rerddap/vignettes/Using_rerddap.html):
+
+> MUR (Multi-scale Ultra-high Resolution) is an analyzed SST product at 0.01-degree resolution going back to 2002, providing one of the longest satellite based time series at such high resolution (see https://podaac.jpl.nasa.gov/dataset/MUR-JPL-L4-GLOB-v4.1).
+
 ### Data Info
 
 Here, I'm going to consider the ```jplMURSST41``` dataset. First, I'm going to look for this dataset in my query results and print some info about it:
@@ -149,5 +153,27 @@ Ok, so now for the payoff. The SST data that we requested - gridded observations
 
 ```{r}
 head(murSST[[2]])
+
+```
+### A cool map
+
+This is borrowed directly from the Vignette I've link to a couple times. I'm including it here just because it's a cool picture that I think people will like. 
+
+
+```{r}
+require("ggplot2")
+require("mapdata")
+require("rerddap")
+sstInfo <- info('jplMURSST41')
+# get latest daily sst
+murSST <- griddap(sstInfo, latitude = c(22., 51.), longitude = c(-140., -105), time = c('last','last'), fields = 'analysed_sst')
+mycolor <- colors$temperature
+w <- map_data("worldHires", ylim = c(22., 51.), xlim = c(-140, -105))
+ggplot(data = murSST$data, aes(x = lon, y = lat, fill = analysed_sst)) +
+    geom_polygon(data = w, aes(x = long, y = lat, group = group), fill = "grey80") +
+    geom_raster(interpolate = FALSE) +
+    scale_fill_gradientn(colours = mycolor, na.value = NA) +
+    theme_bw() + ylab("latitude") + xlab("longitude") +
+    coord_fixed(1.3, xlim = c(-140, -105),  ylim = c(22., 51.)) + ggtitle("Latest MUR SST")
 
 ```
