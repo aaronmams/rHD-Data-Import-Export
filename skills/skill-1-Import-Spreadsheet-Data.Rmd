@@ -56,7 +56,7 @@ head(songs)
 
 ### Conventionally formatted data with read_csv()
 
-The read_csv() method is part of the tidyr ecosystem and comes from the readr package. According to documentation it's supposed to be a lot faster than read.csv(). [Here is a pretty thorough](https://csgillespie.github.io/efficientR/5-3-importing-data.html) discussion of why/how read_csv() and fread() load large data sets considerably faster than read.csv().
+The read_csv() method is part of the tidyverse ecosystem and comes from the readr package. According to documentation it's supposed to be a lot faster than read.csv(). [Here is a pretty thorough](https://csgillespie.github.io/efficientR/5-3-importing-data.html) discussion of why/how read_csv() and fread() load large data sets considerably faster than read.csv().
 
 Practically speaking, it works just like the read.csv() method.
 
