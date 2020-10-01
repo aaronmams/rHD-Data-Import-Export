@@ -1,5 +1,5 @@
 ---
-title: "Lesson-5-Advanced-Data-Import-v.1"
+title: "Lesson-5-Advanced-Data-Import-Databases"
 author: "aaron mamula"
 date: "4/9/2020"
 output: html_document
@@ -91,6 +91,7 @@ If (probably a big if) the stars have aligned for us and everybody was able to e
 ```{r}
 head(needles)
 ```
+
 Example of a simple SQL query to retreive only certain observations from the ```needle_events``` table:
 
 ```{r}
@@ -104,6 +105,7 @@ geos <- tbl(cn, "locations_geo")
 geos <- tbl_df(geos)
 head(geos)
 ```
+
 Here's an example of how we could execute an inner join using both the ```needle_events``` and ```locations_geo``` tables:
 
 ```{r}
