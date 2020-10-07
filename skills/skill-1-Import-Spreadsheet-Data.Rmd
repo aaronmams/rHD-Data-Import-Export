@@ -45,9 +45,46 @@ Here we are going to cover 3 methods for importing data from a spreadsheet-like 
 
 Here, I'm going to use a fun dataset from Kaggle on the [top 50 most downloaded songs on Spotify from 2019](https://www.kaggle.com/leonardopena/top50spotify2019/version/1#). 
 
+### Managing File Paths
+
+The ```read.csv()```, ```read_csv()```, and ```fread()```  methods all accept the primary input ```file``` which should be a character string containing the name of the file to be read. Pointing R/R Studio to the .csv file you wish to import is generally pretty easy...but can be somewhat annoying to illustrate since file paths can be specific to one's system.
+
+For example, the data file ```spotify-top50.csv``` is located inside the ```data``` sub-directory of this R Project. Therefore, the path to this file is ```location-R-Project/data/spotify-top50.csv```. To be more explicit, on my Dell PC laptop the location of this file is: ```C:/Users/aaron.mamula/Desktop/R-Projects/rHD-Data-Import-Export/data/spotify-top50.csv```.
+
+However, I also have a local version of this R Project saved on my Desktop Workstation. On that system the ```spotify-top50.csv``` lives at: ```U:/R Projects/rHD-Data-Import-Export/data/spotify-top50.csv```. 
+
+To avoid having to replace a lot of file paths by hand depending on which system I want to run code on, I use a package called [here](https://github.com/jennybc/here_here) that helps manage file paths and keeps my code general. 
+
+The [here](https://github.com/jennybc/here_here) package comes with a function called ```here()```. The ```here()``` function is a function that helps create file path strings for resources inside of an R/R Studio project. An illustration will go further than an explanation here:
+
+```{r}
+here()
+```
+
+From the above, we can see that here defaults to the root directory of the active R Project. 
+
+If I want to access resources inside of the ```data``` sub-directory of my R Project, I can simply supply the string "data" to the ```here()``` function:
+
+```{r}
+here('data')
+```
+And finally, to access a particular file within the ```data``` sub-directory I can supply the name of that file to the ```here()``` function:
+
+```{r}
+here('data','spotify-top50.csv')
+```
+The beauty of this approach is that it doesn't just work for me on my computers. It will generalize to your systems no matter where you have saved this R Project and regardless of whether you have put the ```spotify-top50.csv``` file in a sub-directory called ```data``` or not. 
+
+For example, if you decide that you would rather have the ```spotify-top50.csv``` file in a sub-directory called ```spotify-data```, and provided that ```spotify-data``` is a child of the root directory of the project, you can form the character string for the file path you need with:
+
+```{r}
+here('spotify-data','spotify-top50.csv')
+```
+
+
 ### Conventionally formatted data with read.csv()
 
-The read.csv() method is a base R functionality for reading comma separated value data file formats.
+The read.csv() method is a base R functionality for reading comma separated value data file formats. 
 
 ```{r}
 songs <- read.csv(file=here('data/spotify-top50.csv'))
