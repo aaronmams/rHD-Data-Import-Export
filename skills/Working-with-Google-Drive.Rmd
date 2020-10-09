@@ -1,0 +1,27 @@
+---
+title: "Importing-Data-From-Google-Drive"
+output: html_document
+---
+
+## Working with Google Drive
+
+```{r}
+library(googledrive)
+
+# example of a search for google drive resources that are google sheets
+drive_find(type="spreadsheet")
+```
+
+
+Here is an example of how to work with a google sheet that I used recently:
+
+```{r}
+video_links <- drive_get("~/R Workshop Video Links")
+```
+
+And here is an example of some analysis we could perform on source data from Google Drive:
+
+```{r}
+
+
+```
