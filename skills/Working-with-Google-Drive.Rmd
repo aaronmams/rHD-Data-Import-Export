@@ -38,11 +38,11 @@ eidl1 <- read_csv("EIDLLoans1.csv")
 head(eidl1)
 ```
 
-One potentially important thing to note here is that the ```googldrive``` methods download the .csv file locally. That is, ```drive_download()``` creates the ```EIDLLoans1.csv``` file inside the active R Studio project. 
+One potentially important thing to note here is that the ```googldrive``` methods downloads the .csv file locally. That is, ```drive_download()``` creates the ```EIDLLoans1.csv``` file inside the active R Studio project. 
 
 A potential advantage of this functionality is that I can work with some data that I cannot host on GitHub. The ```EIDLLoans1.csv``` data are too big to be pushed to GitHub...but R has no problem importing and working with these data. A counter-point to this is, if one is working with large data set maybe it's just better to organize them in a relational database rather than rely on Google Drive. 
 
-Similar to many other R things I write about, I'm demonstrating a way that things CAN be done...not necessarily how they SHOULD be done. 
+Similar to many other R things I write about, I'm demonstrating a way that things CAN be done...not necessarily how they SHOULD be done.
 
 
 
